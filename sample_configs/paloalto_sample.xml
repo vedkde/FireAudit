@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <devices>
+    <entry name="localhost.localdomain">
+      <vsys>
+        <entry name="vsys1">
+          <rulebase>
+            <security>
+              <rules>
+
+                <entry name="Allow-Internal-DNS" uuid="1">
+                  <from><member>trust</member></from>
+                  <to><member>trust</member></to>
+                  <source><member>10.0.1.0/24</member></source>
+                  <destination><member>10.0.0.53/32</member></destination>
+                  <service><member>service-dns</member></service>
+                  <action>allow</action>
+                  <log-end>yes</log-end>
+                  <hit-count>84210</hit-count>
+                </entry>
+
+                <entry name="Allow-Web-Outbound" uuid="2">
+                  <from><member>trust</member></from>
+                  <to><member>untrust</member></to>
+                  <source><member>10.0.1.0/24</member></source>
+                  <destination><member>any</member></destination>
+                  <service><member>tcp/443</member></service>
+                  <action>allow</action>
+                  <log-end>yes</log-end>
+                  <hit-count>15320</hit-count>
+                </entry>
+
+                <entry name="Shadowed-DNS-Host-Rule" uuid="3">
+                  <from><member>trust</member></from>
+                  <to><member>trust</member></to>
+                  <source><member>10.0.1.5/32</member></source>
+                  <destination><member>10.0.0.53/32</member></destination>
+                  <service><member>service-dns</member></service>
+                  <action>deny</action>
+                  <log-end>yes</log-end>
+                  <hit-count>0</hit-count>
+                </entry>
+
+                <entry name="Allow-Any-Any-Temp" uuid="4">
+                  <from><member>untrust</member></from>
+                  <to><member>trust</member></to>
+                  <source><member>any</member></source>
+                  <destination><member>any</member></destination>
+                  <service><member>any</member></service>
+                  <action>allow</action>
+                  <log-end>no</log-end>
+                  <hit-count>412</hit-count>
+                </entry>
+
+                <entry name="Old-VPN-Rule-Unused" uuid="5">
+                  <from><member>vpn-zone</member></from>
+                  <to><member>trust</member></to>
+                  <source><member>172.16.5.0/24</member></source>
+                  <destination><member>10.0.2.0/24</member></destination>
+                  <service><member>tcp/3389</member></service>
+                  <action>allow</action>
+                  <log-end>yes</log-end>
+                  <hit-count>0</hit-count>
+                </entry>
+
+                <entry name="Allow-Web-Outbound-Duplicate" uuid="6">
+                  <from><member>trust</member></from>
+                  <to><member>untrust</member></to>
+                  <source><member>10.0.1.0/24</member></source>
+                  <destination><member>any</member></destination>
+                  <service><member>tcp/443</member></service>
+                  <action>allow</action>
+                  <log-end>yes</log-end>
+                  <hit-count>3</hit-count>
+                </entry>
+
+                <entry name="Allow-SSH-Mgmt" uuid="7">
+                  <from><member>trust</member></from>
+                  <to><member>trust</member></to>
+                  <source><member>10.0.9.0/24</member></source>
+                  <destination><member>10.0.0.0/16</member></destination>
+                  <service><member>tcp/22</member></service>
+                  <action>allow</action>
+                  <log-end>no</log-end>
+                  <hit-count>958</hit-count>
+                </entry>
+
+                <entry name="Deny-All-Cleanup" uuid="8">
+                  <from><member>any</member></from>
+                  <to><member>any</member></to>
+                  <source><member>any</member></source>
+                  <destination><member>any</member></destination>
+                  <service><member>any</member></service>
+                  <action>deny</action>
+                  <log-end>yes</log-end>
+                  <hit-count>221004</hit-count>
+                </entry>
+
+              </rules>
+            </security>
+          </rulebase>
+        </entry>
+      </vsys>
+    </entry>
+  </devices>
+</config>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FireAudit — {{ source_file }}</title>
+<style>
+    :root {
+        --ink: #0a0b0d;
+        --line: #23262c;
+        --text: #d8d6d0;
+        --text-dim: #7a7d84;
+        --text-faint: #4a4d54;
+        --signal: #e8a33d;
+        --signal-dim: #7a5a26;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--ink);
+        color: var(--text);
+    }
+
+    body {
+        font-family: "Söhne", "Inter", -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 64px 48px 96px;
+    }
+
+    .mono {
+        font-family: "JetBrains Mono", "SF Mono", Consolas, "Liberation Mono", monospace;
+    }
+
+    .sheet {
+        max-width: 880px;
+        margin: 0 auto;
+    }
+
+    /* masthead */
+
+    .masthead {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 20px;
+        margin-bottom: 36px;
+    }
+
+    .masthead .kicker {
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        margin: 0 0 10px;
+    }
+
+    .masthead h1 {
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin: 0;
+        color: #f2f0ea;
+    }
+
+    .masthead .source {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-top: 6px;
+    }
+
+    .masthead .stamp {
+        text-align: right;
+        font-size: 11px;
+        color: var(--text-faint);
+        line-height: 1.7;
+    }
+
+    /* readout row */
+
+    .readout {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        border: 1px solid var(--line);
+        margin-bottom: 40px;
+        border-collapse: collapse;
+    }
+
+    .readout > div {
+        display: table-cell;
+        padding: 18px 20px;
+        border-right: 1px solid var(--line);
+        vertical-align: top;
+        width: 25%;
+    }
+
+    .readout > div:last-child { border-right: none; }
+
+    .readout .rlabel {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-faint);
+        margin-bottom: 8px;
+    }
+
+    .readout .rvalue {
+        font-size: 28px;
+        font-weight: 500;
+        color: #f2f0ea;
+        line-height: 1;
+    }
+
+    .readout .rvalue.accent { color: var(--signal); }
+
+    .readout .rsub {
+        font-size: 11px;
+        color: var(--text-dim);
+        margin-top: 6px;
+    }
+
+    .band-tag {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border: 1px solid currentColor;
+    }
+    .band-Low      { color: #7fae7f; }
+    .band-Moderate { color: #c9a94a; }
+    .band-High     { color: #d68a4a; }
+    .band-Critical { color: #d9705a; }
+
+    .usage-note {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+    .usage-note .yes { color: #7fae7f; }
+    .usage-note .no  { color: #c9a94a; }
+
+    /* section headers */
+
+    .section-head {
+        display: table;
+        width: 100%;
+        margin: 44px 0 16px;
+    }
+
+    .section-head .num {
+        display: table-cell;
+        width: 1%;
+        white-space: nowrap;
+        padding-right: 10px;
+        font-size: 12px;
+        color: var(--text-faint);
+        vertical-align: baseline;
+    }
+
+    .section-head h2 {
+        display: table-cell;
+        white-space: nowrap;
+        padding-right: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin: 0;
+        color: #f2f0ea;
+        vertical-align: baseline;
+    }
+
+    .section-head .rule {
+        display: table-cell;
+        width: 100%;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+    }
+
+    /* findings */
+
+    .finding {
+        border-top: 1px solid var(--line);
+        padding: 16px 0;
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .finding:last-child {
+        border-bottom: 1px solid var(--line);
+    }
+
+    .finding .sev-col {
+        display: table-cell;
+        width: 90px;
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding-top: 2px;
+        vertical-align: top;
+    }
+    .sev-critical { color: #d9705a; }
+    .sev-high     { color: #d68a4a; }
+    .sev-medium   { color: #c9a94a; }
+    .sev-low      { color: #7a7d84; }
+
+    .finding .body {
+        display: table-cell;
+        vertical-align: top;
+    }
+
+    .finding .top-line {
+        margin-bottom: 8px;
+    }
+
+    .finding .rulename {
+        font-size: 13px;
+        font-weight: 500;
+        color: #f2f0ea;
+        margin-right: 12px;
+    }
+
+    .finding .issue-tag {
+        font-size: 10px;
+        color: var(--text-faint);
+        margin-right: 12px;
+    }
+
+    .finding .pos {
+        font-size: 10px;
+        color: var(--text-faint);
+    }
+
+    .finding .message {
+        font-family: "Söhne", "Inter", -apple-system, "Segoe UI", sans-serif;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+
+    .finding .fix {
+        font-family: "Söhne", "Inter", -apple-system, "Segoe UI", sans-serif;
+        font-size: 12.5px;
+        color: var(--text-dim);
+        padding-left: 12px;
+        border-left: 2px solid var(--signal-dim);
+    }
+
+    .finding .fix strong {
+        color: var(--text);
+        font-weight: 500;
+    }
+
+    /* footer */
+
+    .footer {
+        margin-top: 56px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        font-size: 10px;
+        color: var(--text-faint);
+        letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 640px) {
+        body { padding: 32px 20px 64px; }
+        .masthead { flex-direction: column; align-items: flex-start; gap: 14px; }
+        .masthead .stamp { text-align: left; }
+        .readout { display: block; }
+        .readout > div {
+            display: block;
+            width: auto;
+            border-right: none;
+            border-bottom: 1px solid var(--line);
+        }
+        .finding { display: block; }
+        .finding .sev-col { display: block; margin-bottom: 6px; }
+        .finding .body { display: block; }
+    }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+    <div class="masthead">
+        <div>
+            <p class="kicker mono">FireAudit</p>
+            <h1>Firewall Rule-Base Report</h1>
+            <div class="source mono">{{ source_file }} · {{ vendor }}</div>
+        </div>
+        <div class="stamp mono">
+            generated&nbsp;&nbsp;{{ generated_at }}<br>
+            {{ total_rules }} rules parsed
+        </div>
+    </div>
+
+    <div class="readout mono">
+        <div>
+            <div class="rlabel">Risk score</div>
+            <div class="rvalue accent">{{ scoring.total_score }}</div>
+            <div class="rsub"><span class="band-tag">{{ scoring.risk_band }}</span></div>
+        </div>
+        <div>
+            <div class="rlabel">Findings</div>
+            <div class="rvalue">{{ scoring.total_findings }}</div>
+            <div class="rsub">across {{ total_rules }} rules</div>
+        </div>
+        <div>
+            <div class="rlabel">Severity mix</div>
+            <div class="rsub" style="margin-top:2px; font-size:12px;">
+                <span class="sev-critical">{{ scoring.severity_counts.critical }} crit</span> ·
+                <span class="sev-high">{{ scoring.severity_counts.high }} high</span><br>
+                <span class="sev-medium">{{ scoring.severity_counts.medium }} med</span> ·
+                <span class="sev-low">{{ scoring.severity_counts.low }} low</span>
+            </div>
+        </div>
+        <div>
+            <div class="rlabel" style="font-family: 'Söhne','Inter',sans-serif; letter-spacing:0.02em;">Usage data</div>
+            <div class="usage-note" style="font-family: 'Söhne','Inter',sans-serif;">
+                {% if logs_provided %}
+                    <span class="yes">Traffic log correlated.</span> Unused-rule findings are based on observed traffic, not just hit-count.
+                {% else %}
+                    <span class="no">Hit-count only.</span> No traffic log was provided — unused-rule findings are a weaker signal.
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="section-head">
+        <span class="num mono">01</span>
+        <h2>Findings, by severity</h2>
+        <span class="rule"></span>
+    </div>
+
+    {% for f in findings %}
+    <div class="finding">
+        <div class="sev-col mono sev-{{ f.severity }}">{{ f.severity }}</div>
+        <div class="body">
+            <div class="top-line">
+                <span class="rulename mono">{{ f.rule.name }}</span>
+                <span class="pos mono">pos&nbsp;{{ f.rule.position }}</span>
+                <span class="issue-tag mono">{{ f.issue_type }}</span>
+            </div>
+            <div class="message">{{ f.message }}</div>
+            <div class="fix"><strong>Fix —</strong> {{ f.suggested_fix }}</div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="footer mono">
+        fireaudit · static config analysis, not a live scan · {{ total_rules }} rules / {{ scoring.total_findings }} findings
+    </div>
+
+</div>
+</body>
+</html>

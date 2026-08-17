@@ -1,0 +1,9 @@
+name,source,destination,service,action,logging,hit_count
+Allow-Internal-DNS,10.0.1.0/24,10.0.0.53/32,DNS,allow,true,84210
+Allow-Web-Outbound,10.0.1.0/24,any,tcp/443,allow,true,15320
+Shadowed-DNS-Host-Rule,10.0.1.5/32,10.0.0.53/32,DNS,deny,true,0
+Allow-Any-Any-Temp,any,any,any,allow,false,412
+Old-VPN-Rule-Unused,172.16.5.0/24,10.0.2.0/24,tcp/3389,allow,true,0
+Allow-Web-Outbound-Duplicate,10.0.1.0/24,any,tcp/443,allow,true,3
+Allow-SSH-Mgmt,10.0.9.0/24,10.0.0.0/16,tcp/22,allow,false,958
+Deny-All-Cleanup,any,any,any,deny,true,221004

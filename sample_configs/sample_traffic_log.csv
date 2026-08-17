@@ -1,0 +1,9 @@
+timestamp,source,destination,service,action,rule_name
+2026-08-10T09:12:03,10.0.1.14,10.0.0.53,DNS,allow,Allow-Internal-DNS
+2026-08-15T14:02:11,10.0.1.22,10.0.0.53,DNS,allow,Allow-Internal-DNS
+2026-08-17T08:45:00,10.0.1.14,142.250.80.46,tcp/443,allow,Allow-Web-Outbound
+2026-08-16T22:10:44,10.0.1.30,151.101.65.69,tcp/443,allow,Allow-Web-Outbound
+2026-08-17T07:30:12,10.0.1.9,104.18.32.7,tcp/443,allow,Allow-Web-Outbound
+2026-08-01T11:00:00,203.0.113.5,10.0.5.20,tcp/80,allow,Allow-Any-Any-Temp
+2026-08-14T16:20:00,10.0.9.4,10.0.0.15,tcp/22,allow,Allow-SSH-Mgmt
+2026-08-16T19:05:33,10.0.9.7,10.0.0.16,tcp/22,allow,Allow-SSH-Mgmt
